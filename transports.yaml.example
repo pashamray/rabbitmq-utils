@@ -1,0 +1,54 @@
+default:
+    clients:
+        amqp:
+            host: 'localhost'
+            vhost: '/'
+            port: 5672
+            login: 'guest'
+            password: 'guest'
+            tls: false
+            tls_verify: false
+        manager:
+            host: 'localhost'
+            vhost: '/'
+            port: 15671
+            login: 'guest'
+            password: 'guest'
+            tls: true
+            tls_verify: false
+src:
+    clients:
+        amqp:
+            host: 'localhost'
+            vhost: 'app'
+            port: 5672
+            login: 'guest'
+            password: 'guest'
+            tls: false
+            tls_verify: false
+        manager:
+            host: 'localhost'
+            vhost: 'app'
+            port: 15671
+            login: 'guest'
+            password: 'guest'
+            tls: true
+            tls_verify: false
+dst:
+    clients:
+        amqp:
+            host: 'localhost'
+            vhost: 'test'
+            port: 5672
+            login: 'guest'
+            password: 'guest'
+            tls: false
+            tls_verify: false
+        manager:
+            host: 'localhost'
+            vhost: 'test'
+            port: 15671
+            login: 'guest'
+            password: 'guest'
+            tls: true
+            tls_verify: false
