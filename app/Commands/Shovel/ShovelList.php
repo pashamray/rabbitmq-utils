@@ -15,7 +15,7 @@ class ShovelList extends Command
      *
      * @var string
      */
-    protected $signature = 'shovel:list {--name-only} {--vhost=} {--transport=default}';
+    protected $signature = 'shovel:list {--name-only} {--vhost=/} {--transport=default}';
 
     /**
      * The console command description.

@@ -17,7 +17,7 @@ class ShovelCreate extends Command
      *
      * @var string
      */
-    protected $signature = 'shovel:create {transport-src} {transport-dst} {resource} {--vhost=/} {--transport=default} {--prefix=shovel} {--force}';
+    protected $signature = 'shovel:create {resource} {--transport-src=source} {--transport-dst=destination} {--vhost=/} {--transport=default} {--prefix=shovel} {--force}';
 
     /**
      * The console command description.
@@ -40,8 +40,8 @@ class ShovelCreate extends Command
         $shovelName = $this->option('prefix') ? sprintf('%s-%s', $this->option('prefix'), $resource) : $resource;
 
         $transport = $transportProvider->getTransport($this->option('transport'));
-        $transportSrc = $transportProvider->getTransport($this->argument('transport-src'));
-        $transportDst = $transportProvider->getTransport($this->argument('transport-dst'));
+        $transportSrc = $transportProvider->getTransport($this->option('transport-src'));
+        $transportDst = $transportProvider->getTransport($this->option('transport-dst'));
 
         $shovel = Shovel::createFromArray([
             'vhost' => $vhost,

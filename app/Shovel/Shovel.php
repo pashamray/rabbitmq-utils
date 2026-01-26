@@ -7,8 +7,8 @@ readonly class Shovel
     public function __construct(
         public string $name,
         public string $vhost,
-        public ShovelResource $source,
-        public ShovelResource $destination,
+        public ?ShovelResource $source = null,
+        public ?ShovelResource $destination = null,
         public bool $addForwardHeaders = false,
         public ShovelSourceAutoDelete $autoDelete = ShovelSourceAutoDelete::NEVER,
         public ShovelAskMode $askMode = ShovelAskMode::ON_CONFIRM,
@@ -21,14 +21,14 @@ readonly class Shovel
         return new self(
             $shovel['name'],
             $shovel['vhost'],
-            new ShovelResource(
+            isset($shovel['src']) ? new ShovelResource(
                 $shovel['src']['uri'],
                 $shovel['src']['name'],
-            ),
-            new ShovelResource(
+            ) : null,
+            isset($shovel['dst']) ? new ShovelResource(
                 $shovel['dst']['uri'],
                 $shovel['dst']['name'],
-            ),
+            ) : null,
         );
     }
 }

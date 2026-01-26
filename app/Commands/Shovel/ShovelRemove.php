@@ -15,7 +15,7 @@ class ShovelRemove extends Command
      *
      * @var string
      */
-    protected $signature = 'shovel:remove {shovel} {--vhost=} {--transport=default} {--force}';
+    protected $signature = 'shovel:remove {shovel} {--vhost=/} {--transport=default} {--force}';
 
     /**
      * The console command description.
