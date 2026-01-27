@@ -1,19 +1,30 @@
 services:
+  php-cli:
+    container_name: php-cli
+    hostname: php-cli
+    image: php:8.4-cli
+    command:
+      - sleep
+      - infinity
+    working_dir: /var/www/
+    volumes:
+      - .:/var/www/
+
   rabbitmq-first:
     container_name: rabbitmq-first
     hostname: rabbitmq-first
     image: rabbitmq:3.13-management
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672"
+      - "15672"
 
   rabbitmq-second:
     container_name: rabbitmq-second
     hostname: rabbitmq-second
     image: rabbitmq:3.13-management
     ports:
-      - 5673:5672
-      - 15673:15672
+      - "5672"
+      - "15672"
 
 networks:
   default:
