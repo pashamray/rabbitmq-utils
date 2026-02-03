@@ -16,7 +16,7 @@ class QueueCreate extends Command
      *
      * @var string
      */
-    protected $signature = 'queue:create {queue} {--vhost=/} {--transport=default}';
+    protected $signature = 'queue:create {queue} {--durable=true} {--type=classic} {--auto-delete=false} {--vhost=/} {--transport=default}';
 
     /**
      * The console command description.
@@ -37,10 +37,17 @@ class QueueCreate extends Command
         $transport = $transportProvider->getTransport($this->option('transport'));
 
         $queue = $this->argument('queue');
+        $queueDurable = filter_var($this->option('durable'), FILTER_VALIDATE_BOOL);
+        $queueType = $this->option('type');
+        $queueAutoDelete = filter_var($this->option('auto-delete'), FILTER_VALIDATE_BOOL);
+
         $result = $transport->queueCreate(
             Queue::createFromArray([
                 'vhost' => (string) $this->option('vhost'),
                 'name' => $queue,
+                'type' => $queueType,
+                'durable' => $queueDurable,
+                'auto_delete' => $queueAutoDelete,
             ])
         );
 

@@ -61,15 +61,19 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             ->put(
                 sprintf('/api/queues/%s/%s', urlencode($queue->vhost), $queue->name),
                 [
-                    'auto_delete' => false,
-                    'durable' => true,
-                    'arguments' =>  [],
+                    'auto_delete' => $queue->autoDelete,
+                    'durable' => $queue->durable,
+                    'arguments' =>  array_merge([
+                        'x-queue-type' => $queue->type,
+                    ], $queue->arguments),
                 ]
             )
             ->json();
 
         if (isset($result['error'])) {
-            throw new \RuntimeException(sprintf('Client error: %s', $result['error']));
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
         }
 
         return true;
