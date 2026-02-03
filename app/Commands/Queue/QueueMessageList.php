@@ -26,6 +26,7 @@ class QueueMessageList extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws JsonException
      */
     public function handle(TransportProvider $transportProvider): int
@@ -45,8 +46,8 @@ class QueueMessageList extends Command
         $payloadOnly = $this->option('payload-only');
 
         $messages = array_map(
-            static fn(Message $message) => $payloadOnly ? [
-                'payload' => $message->payload
+            static fn (Message $message) => $payloadOnly ? [
+                'payload' => $message->payload,
             ] : [
                 'count' => $message->count,
                 'headers' => json_encode($message->headers, JSON_THROW_ON_ERROR),

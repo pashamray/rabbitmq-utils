@@ -48,9 +48,9 @@ class QueueList extends Command
             'type',
             'consumers',
             'messages',
-            'arguments'
+            'arguments',
         ], array_map(
-            static fn(Queue $queue) => [
+            static fn (Queue $queue) => [
                 $queue->vhost,
                 $queue->name,
                 $queue->type,

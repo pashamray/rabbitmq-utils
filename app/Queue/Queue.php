@@ -14,8 +14,7 @@ readonly class Queue
         public bool $durable = true,
         public bool $exclusive = false,
         public array $arguments = [],
-    ) {
-    }
+    ) {}
 
     public static function createFromArray(array $queue): self
     {

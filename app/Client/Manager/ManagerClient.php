@@ -27,14 +27,12 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     public function __construct(
         public string $host,
         public string $vhost,
-        public int    $port,
+        public int $port,
         public string $login,
         public string $password,
-        public bool   $tls = false,
-        public bool   $tlsVerify = false,
-    )
-    {
-    }
+        public bool $tls = false,
+        public bool $tlsVerify = false,
+    ) {}
 
     public function queueList(string $vhost = '/'): array
     {
@@ -49,7 +47,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             throw new \RuntimeException(sprintf('Client error: %s', $queues['error']));
         }
 
-        return array_map(static fn(array $queue) => Queue::createFromArray($queue), $queues);
+        return array_map(static fn (array $queue) => Queue::createFromArray($queue), $queues);
     }
 
     public function queueCreate(Queue $queue): bool
@@ -63,7 +61,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
                 [
                     'auto_delete' => $queue->autoDelete,
                     'durable' => $queue->durable,
-                    'arguments' =>  array_merge([
+                    'arguments' => array_merge([
                         'x-queue-type' => $queue->type,
                     ], $queue->arguments),
                 ]
@@ -99,7 +97,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             throw new \RuntimeException(sprintf('Client error: %s', $messages['error']));
         }
 
-        return array_map(static fn(array $message) => Message::createFromArray($message), $messages);
+        return array_map(static fn (array $message) => Message::createFromArray($message), $messages);
     }
 
     public function shovelList(string $vhost): array
@@ -115,7 +113,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             throw new \RuntimeException(sprintf('Client error: %s', $shovels['error']));
         }
 
-        return array_map(static fn(array $shovel) => Shovel::createFromArray($shovel), $shovels);
+        return array_map(static fn (array $shovel) => Shovel::createFromArray($shovel), $shovels);
     }
 
     public function shovelCreate(Shovel $shovel): bool
@@ -132,16 +130,16 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
                     'value' => [
                         'src-queue' => $shovel->source->name,
                         'src-uri' => $shovel->source->uri,
-//                        'dest-exchange' => null,
+                        //                        'dest-exchange' => null,
                         'dest-queue' => $shovel->destination->name,
                         'dest-uri' => $shovel->destination->uri,
                         'ack-mode' => $shovel->askMode,
                         'delete-after' => $shovel->autoDelete,
                         'add-forward-headers' => $shovel->addForwardHeaders,
                         'prefetch-count' => $shovel->prefetchCount,
-//                        'reconnect-delay' => 30,
+                        //                        'reconnect-delay' => 30,
                     ],
-                    'vhost' => $shovel->vhost
+                    'vhost' => $shovel->vhost,
                 ]
             )
             ->json();

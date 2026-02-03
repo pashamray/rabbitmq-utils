@@ -41,7 +41,7 @@ class TransportList extends Command
         $this->table([
             'name',
         ], array_map(
-            static fn(TransportInterface $transport) => [
+            static fn (TransportInterface $transport) => [
                 $transport->getName(),
             ],
             $transports

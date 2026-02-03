@@ -38,7 +38,7 @@ class TransportServiceProvider extends ServiceProvider
 
             $this->app->singleton(
                 $transportId,
-                static fn(Application $app) => new Transport(
+                static fn (Application $app) => new Transport(
                     $name,
                     ...$app->tagged($transportClientTag)
                 )

@@ -11,7 +11,7 @@ use App\Shovel\ShovelInterface;
 
 readonly class Transport implements TransportInterface
 {
-    /** @var ClientInterface[] $clients */
+    /** @var ClientInterface[] */
     private array $clients;
 
     public function __construct(private string $name, ClientInterface ...$clients)
@@ -99,7 +99,8 @@ readonly class Transport implements TransportInterface
             return $client->shovelCreate($shovel);
         }
 
-        throw new \RuntimeException(sprintf('Not found client with interface: %s', ShovelInterface::class));    }
+        throw new \RuntimeException(sprintf('Not found client with interface: %s', ShovelInterface::class));
+    }
 
     public function shovelRemove(string $vhost, string $name): bool
     {

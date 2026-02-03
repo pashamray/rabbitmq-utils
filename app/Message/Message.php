@@ -8,8 +8,7 @@ readonly class Message
         public int $count,
         public array $headers,
         public string $payload,
-    ) {
-    }
+    ) {}
 
     public static function createFromArray(array $message): self
     {

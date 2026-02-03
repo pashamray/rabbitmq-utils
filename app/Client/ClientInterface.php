@@ -2,7 +2,4 @@
 
 namespace App\Client;
 
-interface ClientInterface
-{
-
-}
+interface ClientInterface {}

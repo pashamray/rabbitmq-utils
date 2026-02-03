@@ -20,14 +20,12 @@ readonly class AmqpClient implements AmqpClientInterface
     public function __construct(
         public string $host,
         public string $vhost,
-        public int    $port,
+        public int $port,
         public string $login,
         public string $password,
-        public bool   $tls = false,
-        public bool   $tlsVerify = false,
-    )
-    {
-    }
+        public bool $tls = false,
+        public bool $tlsVerify = false,
+    ) {}
 
     public function getAmqpUri(bool $local = false): string
     {

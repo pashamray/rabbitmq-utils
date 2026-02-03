@@ -11,6 +11,7 @@ use LaravelZero\Framework\Commands\Command;
 class QueueCreate extends Command
 {
     use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
      *

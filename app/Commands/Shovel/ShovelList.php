@@ -2,7 +2,6 @@
 
 namespace App\Commands\Shovel;
 
-use App\Queue\Queue;
 use App\Shovel\Shovel;
 use App\Transport\TransportProvider;
 use Illuminate\Console\Scheduling\Schedule;
@@ -49,7 +48,7 @@ class ShovelList extends Command
             'vhost',
             'name',
         ], array_map(
-            static fn(Shovel $shovel) => [
+            static fn (Shovel $shovel) => [
                 $shovel->vhost,
                 $shovel->name,
             ],

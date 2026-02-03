@@ -13,8 +13,7 @@ readonly class Shovel
         public ShovelSourceAutoDelete $autoDelete = ShovelSourceAutoDelete::NEVER,
         public ShovelAskMode $askMode = ShovelAskMode::ON_CONFIRM,
         public int $prefetchCount = 1,
-    ) {
-    }
+    ) {}
 
     public static function createFromArray(array $shovel): self
     {

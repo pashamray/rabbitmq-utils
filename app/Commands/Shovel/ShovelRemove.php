@@ -10,6 +10,7 @@ use LaravelZero\Framework\Commands\Command;
 class ShovelRemove extends Command
 {
     use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
      *
