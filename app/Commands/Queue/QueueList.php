@@ -45,12 +45,18 @@ class QueueList extends Command
         $this->table([
             'vhost',
             'name',
+            'type',
+            'consumers',
             'messages',
+            'arguments'
         ], array_map(
             static fn(Queue $queue) => [
                 $queue->vhost,
                 $queue->name,
+                $queue->type,
+                $queue->consumers,
                 $queue->messages,
+                count($queue->arguments),
             ],
             $queues
         ));
