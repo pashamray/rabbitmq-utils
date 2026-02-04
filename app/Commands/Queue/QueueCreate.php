@@ -54,7 +54,11 @@ class QueueCreate extends Command
 
         if ($result === false) {
             $this->error(sprintf('Unable to create queue %s.', $queue));
+
+            return self::FAILURE;
         }
+
+        $this->info(sprintf('Queue %s created', $queue));
 
         return self::SUCCESS;
     }
