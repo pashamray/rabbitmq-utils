@@ -38,16 +38,18 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // GET /api/queues/{vhost}
 
-        $queues = Http::baseUrl($this->buildUrl())
+        $result = Http::baseUrl($this->buildUrl())
             ->withOptions(['verify' => $this->tlsVerify])
             ->get(sprintf('/api/queues/%s', urlencode($vhost)))
             ->json();
 
-        if (isset($queues['error'])) {
-            throw new \RuntimeException(sprintf('Client error: %s', $queues['error']));
+        if (isset($result['error'])) {
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
         }
 
-        return array_map(static fn (array $queue) => Queue::createFromArray($queue), $queues);
+        return array_map(static fn (array $queue) => Queue::createFromArray($queue), $result);
     }
 
     public function queueCreate(Queue $queue): bool
@@ -81,7 +83,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // POST /api/queues/{vhost}/{queue}/get
 
-        $messages = Http::baseUrl($this->buildUrl())
+        $result = Http::baseUrl($this->buildUrl())
             ->withOptions(['verify' => $this->tlsVerify])
             ->post(
                 sprintf('/api/queues/%s/%s/get', urlencode($vhost), $queue),
@@ -93,27 +95,31 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             )
             ->json();
 
-        if (isset($messages['error'])) {
-            throw new \RuntimeException(sprintf('Client error: %s', $messages['error']));
+        if (isset($result['error'])) {
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
         }
 
-        return array_map(static fn (array $message) => Message::createFromArray($message), $messages);
+        return array_map(static fn (array $message) => Message::createFromArray($message), $result);
     }
 
     public function shovelList(string $vhost): array
     {
         // GET /api/shovels/{vhost}
 
-        $shovels = Http::baseUrl($this->buildUrl())
+        $result = Http::baseUrl($this->buildUrl())
             ->withOptions(['verify' => $this->tlsVerify])
             ->get(sprintf('/api/shovels/%s', urlencode($vhost)))
             ->json();
 
-        if (isset($shovels['error'])) {
-            throw new \RuntimeException(sprintf('Client error: %s', $shovels['error']));
+        if (isset($result['error'])) {
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
         }
 
-        return array_map(static fn (array $shovel) => Shovel::createFromArray($shovel), $shovels);
+        return array_map(static fn (array $shovel) => Shovel::createFromArray($shovel), $result);
     }
 
     public function shovelCreate(Shovel $shovel): bool
@@ -145,7 +151,9 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             ->json();
 
         if (isset($result['error'])) {
-            throw new \RuntimeException(sprintf('Client error: %s', $result['error']));
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
         }
 
         return true;
@@ -161,7 +169,9 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             ->json();
 
         if (isset($result['error'])) {
-            throw new \RuntimeException(sprintf('Client error: %s', $result['error']));
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
         }
 
         return true;
