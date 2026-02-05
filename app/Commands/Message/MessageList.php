@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commands\Queue;
+namespace App\Commands\Message;
 
 use App\Message\Message;
 use App\Transport\TransportProvider;
@@ -8,21 +8,21 @@ use Illuminate\Console\Scheduling\Schedule;
 use JsonException;
 use LaravelZero\Framework\Commands\Command;
 
-class QueueMessageList extends Command
+class MessageList extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'queue:message:list {queue} {--count=10} {--payload-only} {--vhost=/} {--transport=default} {--format=table}';
+    protected $signature = 'message:list {queue} {--count=10} {--payload-only} {--vhost=/} {--transport=default} {--format=table}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Queues message list';
+    protected $description = 'Message list';
 
     /**
      * Execute the console command.
