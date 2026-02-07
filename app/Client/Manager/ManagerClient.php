@@ -7,10 +7,13 @@ use App\Queue\Queue;
 use App\Queue\QueueInterface;
 use App\Shovel\Shovel;
 use App\Shovel\ShovelInterface;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 readonly class ManagerClient implements ManagerClientInterface, QueueInterface, ShovelInterface
 {
+    private PendingRequest $client;
+
     public static function createFromArray(array $config): self
     {
         return new static(
@@ -20,7 +23,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             $config['login'],
             $config['password'],
             $config['tls'],
-            $config['tls_verify']
+            $config['tls_verify'],
         );
     }
 
@@ -32,14 +35,16 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         public string $password,
         public bool $tls = false,
         public bool $tlsVerify = false,
-    ) {}
+    ) {
+        $this->client = $this->buildClient();
+    }
 
     public function queueList(string $vhost = '/'): array
     {
         // GET /api/queues/{vhost}
 
-        $result = Http::baseUrl($this->buildUrl())
-            ->withOptions(['verify' => $this->tlsVerify])
+        $result = $this
+            ->client
             ->get(sprintf('/api/queues/%s', urlencode($vhost)))
             ->json();
 
@@ -52,8 +57,8 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // PUT /api/queues/{vhost}/{name}
 
-        $result = Http::baseUrl($this->buildUrl())
-            ->withOptions(['verify' => $this->tlsVerify])
+        $result = $this
+            ->client
             ->put(
                 sprintf('/api/queues/%s/%s', urlencode($queue->vhost), $queue->name),
                 [
@@ -62,7 +67,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
                     'arguments' => array_merge([
                         'x-queue-type' => $queue->type,
                     ], $queue->arguments),
-                ]
+                ],
             )
             ->json();
 
@@ -75,15 +80,15 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // POST /api/queues/{vhost}/{queue}/get
 
-        $result = Http::baseUrl($this->buildUrl())
-            ->withOptions(['verify' => $this->tlsVerify])
+        $result = $this
+            ->client
             ->post(
                 sprintf('/api/queues/%s/%s/get', urlencode($vhost), $queue),
                 [
                     'count' => $count,
                     'ackmode' => 'ack_requeue_true',
                     'encoding' => 'auto',
-                ]
+                ],
             )
             ->json();
 
@@ -96,8 +101,8 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // GET /api/shovels/{vhost}
 
-        $result = Http::baseUrl($this->buildUrl())
-            ->withOptions(['verify' => $this->tlsVerify])
+        $result = $this
+            ->client
             ->get(sprintf('/api/shovels/%s', urlencode($vhost)))
             ->json();
 
@@ -110,8 +115,8 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // PUT /api/parameters/shovel/{vhost}/{name}
 
-        $result = Http::baseUrl($this->buildUrl())
-            ->withOptions(['verify' => $this->tlsVerify])
+        $result = $this
+            ->client
             ->put(
                 sprintf('/api/parameters/shovel/%s/%s', urlencode($shovel->vhost), $shovel->name),
                 [
@@ -130,7 +135,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
                         //                        'reconnect-delay' => 30,
                     ],
                     'vhost' => $shovel->vhost,
-                ]
+                ],
             )
             ->json();
 
@@ -143,14 +148,30 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
     {
         // DELETE /api/parameters/shovel/{vhost}/{name}
 
-        $result = Http::baseUrl($this->buildUrl())
-            ->withOptions(['verify' => $this->tlsVerify])
+        $result = $this
+            ->client
             ->delete(sprintf('/api/parameters/shovel/%s/%s', urlencode($vhost), $name))
             ->json();
 
         $this->handleResponse($result);
 
         return true;
+    }
+
+    private function handleResponse(?array $result): ?array
+    {
+        if (isset($result['error'])) {
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason']),
+            );
+        }
+
+        return $result;
+    }
+
+    private function buildClient(): PendingRequest
+    {
+        return Http::baseUrl($this->buildUrl())->withOptions(['verify' => $this->tlsVerify]);
     }
 
     private function buildUrl(): string
@@ -168,16 +189,5 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $schema = $this->tls ? 'https' : 'http';
 
         return sprintf('%s://%s', $schema, implode('@', [$credentials, $endpoint]));
-    }
-
-    public function handleResponse(?array $result): ?array
-    {
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
-
-        return $result;
     }
 }
