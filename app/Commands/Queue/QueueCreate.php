@@ -17,7 +17,7 @@ class QueueCreate extends Command
      *
      * @var string
      */
-    protected $signature = 'queue:create {queue} {--durable=true} {--type=classic} {--auto-delete=false} {--vhost=/} {--transport=default}';
+    protected $signature = 'queue:create {queue} {--durable=true} {--type=classic} {--auto-delete=false} {--vhost=default} {--transport=default}';
 
     /**
      * The console command description.

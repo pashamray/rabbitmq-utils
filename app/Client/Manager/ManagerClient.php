@@ -25,13 +25,13 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $this->client = $this->buildClient();
     }
 
-    public function queueList(string $vhost = '/'): array
+    public function queueList(string $vhost): array
     {
         // GET /api/queues/{vhost}
 
         $result = $this
             ->client
-            ->get(sprintf('/api/queues/%s', urlencode($vhost)))
+            ->get(sprintf('/api/queues/%s', $this->resolveVhost($vhost)))
             ->json();
 
         $result = $this->handleResponse($result);
@@ -46,7 +46,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $result = $this
             ->client
             ->put(
-                sprintf('/api/queues/%s/%s', urlencode($queue->vhost), $queue->name),
+                sprintf('/api/queues/%s/%s', $this->resolveVhost($queue->vhost), $queue->name),
                 [
                     'auto_delete' => $queue->autoDelete,
                     'durable' => $queue->durable,
@@ -69,7 +69,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $result = $this
             ->client
             ->post(
-                sprintf('/api/queues/%s/%s/get', urlencode($vhost), $queue),
+                sprintf('/api/queues/%s/%s/get', $this->resolveVhost($vhost), $queue),
                 [
                     'count' => $count,
                     'ackmode' => 'ack_requeue_true',
@@ -89,7 +89,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
 
         $result = $this
             ->client
-            ->get(sprintf('/api/shovels/%s', urlencode($vhost)))
+            ->get(sprintf('/api/shovels/%s', $this->resolveVhost($vhost)))
             ->json();
 
         $result = $this->handleResponse($result);
@@ -104,7 +104,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $result = $this
             ->client
             ->put(
-                sprintf('/api/parameters/shovel/%s/%s', urlencode($shovel->vhost), $shovel->name),
+                sprintf('/api/parameters/shovel/%s/%s', $this->resolveVhost($shovel->vhost), $shovel->name),
                 [
                     'component' => 'shovel',
                     'name' => $shovel->name,
@@ -136,7 +136,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
 
         $result = $this
             ->client
-            ->delete(sprintf('/api/parameters/shovel/%s/%s', urlencode($vhost), $name))
+            ->delete(sprintf('/api/parameters/shovel/%s/%s', $this->resolveVhost($vhost), $name))
             ->json();
 
         $this->handleResponse($result);
@@ -175,5 +175,14 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $schema = $this->config->tls ? 'https' : 'http';
 
         return sprintf('%s://%s', $schema, implode('@', [$credentials, $endpoint]));
+    }
+
+    /**
+     * @param string $vhost
+     * @return string
+     */
+    public function resolveVhost(string $vhost): string
+    {
+        return urlencode($vhost === 'default' ? $this->config->vhost : $vhost);
     }
 }

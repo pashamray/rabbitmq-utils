@@ -14,7 +14,7 @@ class QueueList extends Command
      *
      * @var string
      */
-    protected $signature = 'queue:list {--name-only} {--vhost=/} {--transport=default}';
+    protected $signature = 'queue:list {--name-only} {--vhost=default} {--transport=default}';
 
     /**
      * The console command description.

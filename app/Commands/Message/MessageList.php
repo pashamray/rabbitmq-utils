@@ -15,7 +15,7 @@ class MessageList extends Command
      *
      * @var string
      */
-    protected $signature = 'message:list {queue} {--count=10} {--payload-only} {--vhost=/} {--transport=default} {--format=table}';
+    protected $signature = 'message:list {queue} {--count=10} {--payload-only} {--vhost=default} {--transport=default} {--format=table}';
 
     /**
      * The console command description.

@@ -17,7 +17,7 @@ class ShovelCreate extends Command
      *
      * @var string
      */
-    protected $signature = 'shovel:create {resource} {--transport-src=source} {--transport-dst=destination} {--vhost=/} {--transport=default} {--prefix=shovel} {--force}';
+    protected $signature = 'shovel:create {resource} {--transport-src=source} {--transport-dst=destination} {--vhost=default} {--transport=default} {--prefix=shovel} {--force}';
 
     /**
      * The console command description.
