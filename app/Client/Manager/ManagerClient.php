@@ -43,11 +43,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             ->get(sprintf('/api/queues/%s', urlencode($vhost)))
             ->json();
 
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
+        $result = $this->handleResponse($result);
 
         return array_map(static fn (array $queue) => Queue::createFromArray($queue), $result);
     }
@@ -70,11 +66,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             )
             ->json();
 
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
+        $this->handleResponse($result);
 
         return true;
     }
@@ -95,11 +87,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             )
             ->json();
 
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
+        $result = $this->handleResponse($result);
 
         return array_map(static fn (array $message) => Message::createFromArray($message), $result);
     }
@@ -113,11 +101,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             ->get(sprintf('/api/shovels/%s', urlencode($vhost)))
             ->json();
 
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
+        $result = $this->handleResponse($result);
 
         return array_map(static fn (array $shovel) => Shovel::createFromArray($shovel), $result);
     }
@@ -150,11 +134,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             )
             ->json();
 
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
+        $this->handleResponse($result);
 
         return true;
     }
@@ -168,11 +148,7 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
             ->delete(sprintf('/api/parameters/shovel/%s/%s', urlencode($vhost), $name))
             ->json();
 
-        if (isset($result['error'])) {
-            throw new \RuntimeException(
-                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
-            );
-        }
+        $this->handleResponse($result);
 
         return true;
     }
@@ -192,5 +168,16 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         $schema = $this->tls ? 'https' : 'http';
 
         return sprintf('%s://%s', $schema, implode('@', [$credentials, $endpoint]));
+    }
+
+    public function handleResponse(?array $result): ?array
+    {
+        if (isset($result['error'])) {
+            throw new \RuntimeException(
+                sprintf('Client error: %s, reason: %s', $result['error'], $result['reason'])
+            );
+        }
+
+        return $result;
     }
 }
