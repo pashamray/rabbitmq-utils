@@ -14,27 +14,13 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
 {
     private PendingRequest $client;
 
-    public static function createFromArray(array $config): self
+    static public function create(ManagerClientConfig $config): self
     {
-        return new static(
-            $config['host'],
-            $config['vhost'],
-            $config['port'],
-            $config['login'],
-            $config['password'],
-            $config['tls'],
-            $config['tls_verify'],
-        );
+        return new static($config);
     }
 
     public function __construct(
-        public string $host,
-        public string $vhost,
-        public int $port,
-        public string $login,
-        public string $password,
-        public bool $tls = false,
-        public bool $tlsVerify = false,
+        public ManagerClientConfig $config,
     ) {
         $this->client = $this->buildClient();
     }
@@ -171,22 +157,22 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
 
     private function buildClient(): PendingRequest
     {
-        return Http::baseUrl($this->buildUrl())->withOptions(['verify' => $this->tlsVerify]);
+        return Http::baseUrl($this->buildUrl())->withOptions(['verify' => $this->config->tlsVerify]);
     }
 
     private function buildUrl(): string
     {
         $credentials = implode(':', [
-            $this->login,
-            $this->password,
+            $this->config->login,
+            $this->config->password,
         ]);
 
         $endpoint = implode(':', [
-            $this->host,
-            $this->port,
+            $this->config->host,
+            $this->config->port,
         ]);
 
-        $schema = $this->tls ? 'https' : 'http';
+        $schema = $this->config->tls ? 'https' : 'http';
 
         return sprintf('%s://%s', $schema, implode('@', [$credentials, $endpoint]));
     }
