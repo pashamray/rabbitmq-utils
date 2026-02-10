@@ -39,6 +39,23 @@ readonly class ManagerClient implements ManagerClientInterface, QueueInterface, 
         return array_map(static fn (array $queue) => Queue::createFromArray($queue), $result);
     }
 
+    public function queueRemove(string $vhost, string $name): bool
+    {
+        // DELETE /api/queues/{vhost}/{name}
+
+        $result = $this
+            ->client
+            ->delete(
+                sprintf('/api/queues/%s/%s', $this->resolveVhost($vhost), $name),
+            )
+            ->json();
+
+        $this->handleResponse($result);
+
+        return true;
+    }
+
+
     public function queueCreate(Queue $queue): bool
     {
         // PUT /api/queues/{vhost}/{name}

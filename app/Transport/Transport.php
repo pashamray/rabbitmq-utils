@@ -50,6 +50,20 @@ readonly class Transport implements TransportInterface
         throw new \RuntimeException(sprintf('Not found client with interface: %s', QueueInterface::class));
     }
 
+    public function queueRemove(string $vhost, string $name): bool
+    {
+        foreach ($this->clients as $client) {
+            if (($client instanceof QueueInterface) === false) {
+                continue;
+            }
+
+            return $client->queueRemove($vhost, $name);
+        }
+
+        throw new \RuntimeException(sprintf('Not found client with interface: %s', QueueInterface::class));
+    }
+
+
     public function queueCreate(Queue $queue): bool
     {
         foreach ($this->clients as $client) {
